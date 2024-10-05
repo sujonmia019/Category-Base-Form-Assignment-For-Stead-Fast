@@ -21,11 +21,31 @@ class FieldRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'form_id'     => ['required','integer'],
-            'label'       => ['required','string','max:180'],
-            'placeholder' => ['nullable','string','max:180'],
-            'type'        => ['required','in:text,textarea,file,date']
-        ];
+        if (request()->form_name == 'text') {
+            return [
+                'form_id'     => ['required','integer'],
+                'label'       => ['required','string','max:180'],
+                'placeholder' => ['nullable','string','max:180'],
+                'type'        => ['required','in:text,tel,email']
+            ];
+        }
+
+        if (request()->form_name == 'field') {
+            return [
+                'form_id'     => ['required','integer'],
+                'label'       => ['required','string','max:180'],
+                'placeholder' => ['nullable','string','max:180'],
+                'type'        => ['required','in:date,file']
+            ];
+        }
+
+        if (request()->form_name == 'multi') {
+            return [
+                'form_id'     => ['required','integer'],
+                'label'       => ['required','string','max:180'],
+                'options'     => ['required','string'],
+                'type'        => ['required','in:select,checkbox,radio']
+            ];
+        }
     }
 }

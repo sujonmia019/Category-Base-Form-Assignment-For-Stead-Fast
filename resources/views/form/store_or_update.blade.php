@@ -26,12 +26,17 @@
         font-size: 12px;
         border-radius: 3px;
     }
+    .disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
 </style>
 @endpush
 
 @section('content')
     <div class="row">
-        <div class="col-md-6 mx-auto">
+        <div class="col-md-8">
             <div class="card">
                 <div class="card-header py-2">
                     <h5 class="card-title mb-0 d-flex align-items-center justify-content-between">{{ $title }}
@@ -60,6 +65,24 @@
                     <div class="text-right mt-2">
                         <button type="button" class="btn btn-sm rounded-0 btn-success shadow-none" id="save-btn"><span></span> Save</button>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header py-1">
+                    <h5 class="card-title mb-0">Choose Field</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="m-0 p-0 field-list disabled">
+                        <li><span><i class="fa fa-sm fa-minus mr-1"></i>Text:</span></li>
+                        <li><span><i class="fa fa-sm fa-bars mr-1"></i>Textarea:</span></li>
+                        <li><span><i class="fa fa-sm fa-caret-square-o-down mr-1"></i>Dropdown:</span></li>
+                        <li><span><i class="fa fa-sm fa-dot-circle-o mr-1"></i>Multiple Choice:</span></li>
+                        <li><span><i class="fa fa-sm fa-check-square mr-1"></i>Checkbox:</span></li>
+                        <li><span><i class="fa fa-sm fa-file mr-1"></i>File:</span></li>
+                        <li><span><i class="fa fa-sm fa-calendar mr-1"></i>Date:</span></li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -100,7 +123,7 @@
                         notification(data.status, data.message);
                         if (data.status == 'success') {
                             setInterval(() => {
-                                window.location.reload();
+                                window.location.href = data.redirect;
                             }, 1500);
                         }
                     }

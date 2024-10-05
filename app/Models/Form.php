@@ -36,6 +36,6 @@ class Form extends Model
     }
 
     public function fields(){
-        return $this->hasMany(FormField::class);
+        return $this->hasMany(FormField::class)->orderBy('ordering','ASC');
     }
 }

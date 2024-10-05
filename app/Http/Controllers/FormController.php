@@ -89,7 +89,7 @@ class FormController extends Controller
 
             $result = Form::updateOrCreate(['id'=>$request->update_id],$collection->all());
             if($result){
-                return $this->store_message($result,$request->update_id);
+                return response()->json(['status'=>'success','message'=>'Form created successful.','redirect'=>route('app.forms.fields.index',$result->id)]);
             }else{
                 return $this->response_json('error','Data Cannot Save',null,204);
             }
