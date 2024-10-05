@@ -37,7 +37,7 @@ class FormController extends Controller
                     return table_checkbox($row->id);
                 })
                 ->addColumn('created_at', function($row){
-                    return date(config('settings.date_format'),strtotime($row->created_at));
+                    return dateFormat($row->created_at);
                 })
                 ->addColumn('status', function($row){
                     return change_status($row->id,$row->status,$row->name);

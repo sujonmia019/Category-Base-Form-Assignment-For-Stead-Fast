@@ -56,7 +56,7 @@
                     </h5>
                 </div>
             </div>
-
+    
             <div class="alert alert-info"><strong>Noted:</strong> In order to create a form, you need to click on any on the question type in the presentation section (right sidebar) below. Please ensure that you fill in the appropriate field before submitting.</div>
 
             @if ($form->fields->isNotEmpty())

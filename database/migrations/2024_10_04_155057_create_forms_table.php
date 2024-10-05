@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
             $table->string('title');
-            $table->string('description');
+            $table->longText('description');
             $table->text('url');
             $table->enum('status',[1,2])->default(1)->comment('1 = Published, 2 = Pending');
             $table->string('created_by')->nullable();
