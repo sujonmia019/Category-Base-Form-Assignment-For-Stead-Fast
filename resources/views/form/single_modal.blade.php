@@ -4,7 +4,7 @@
             <div class="modal-header py-1">
                 <h5 class="modal-title text-capitalize" id="modal-title"></h5>
                 <button type="button" class="close p-1" data-dismiss="modal">&times;</button>
-            </div>
+            </div>   
             <div class="modal-body">
                 <form id="field_store_or_update_form" class="form" method="POST">
                     @csrf
