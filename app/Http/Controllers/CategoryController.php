@@ -18,7 +18,7 @@ class CategoryController extends Controller
 
     public function index(Request $request){
         // authorize
-        Gate::allows('admin_access');
+        Gate::authorize('admin_access');
 
         if($request->ajax()){
 

@@ -17,7 +17,7 @@
                     <h5 class="card-title mb-0">{{ $title }}</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('app.reports.index') }}" method="GET">
+                    <form action="{{ route('user.reports.index') }}" method="GET">
                         <div class="row mb-3">
                             <div class="col-md-3">
                                 <select name="form" id="form" class="form-control form-control-sm rounded-0">
@@ -52,7 +52,6 @@
                                     <th>SL</th>
                                     <th>Form Name</th>
                                     <th>Category</th>
-                                    <th>Submit User</th>
                                     <th>Submit Date</th>
                                     <th>Form Values</th>
                                 </tr>
@@ -63,7 +62,6 @@
                                         <td>{{ $submissionDatas->firstItem() + $key }}</td>
                                         <td>{{ $submission->form->title }}</td>
                                         <td>{{ $submission->form->category->name }}</td>
-                                        <td>{{ $submission->user->name }}</td>
                                         <td>{{ dateFormat($submission->created_at) }}</td>
                                         <td>
                                             <ul class="m-0 p-0" style="list-style: none;">

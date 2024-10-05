@@ -9,6 +9,7 @@ use App\Traits\ResponseMessage;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -21,6 +22,8 @@ class FormController extends Controller
      */
     public function index(Request $request)
     {
+        Gate::authorize('admin_access');
+
         if($request->ajax()){
             $getData = Form::with('category')->orderBy('id','desc');
             return DataTables::eloquent($getData)
@@ -66,6 +69,8 @@ class FormController extends Controller
      */
     public function create()
     {
+        Gate::authorize('admin_access');
+
         $data['categories'] = Category::active()->pluck('name','id');
         page_title('New Form');
         return view('form.store_or_update',$data);
@@ -98,6 +103,8 @@ class FormController extends Controller
     }
 
     public function edit(int $id){
+        Gate::authorize('admin_access');
+        
         $data['form']       = Form::findOrFail($id);
         $data['categories'] = Category::active()->pluck('name','id');
         page_title('Edit Form');

@@ -16,7 +16,7 @@ class FieldController extends Controller
     use ResponseMessage;
 
     public function formField(int $id){
-        Gate::allows('admin_access');
+        Gate::authorize('admin_access');
 
         $data['form'] = Form::with('fields')->findOrFail($id);
 

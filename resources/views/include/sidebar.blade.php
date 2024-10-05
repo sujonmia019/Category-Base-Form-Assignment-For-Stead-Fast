@@ -26,6 +26,10 @@
                 <li class="{{ request()->is('panel') ? 'active' : '' }}">
                     <a href="{{ route('user.dashboard') }}"><i class="fa fa-list fa-sm"></i> Form List</a>
                 </li>
+
+                <li class="{{ request()->is('panel/reports*') ? 'active' : '' }}">
+                    <a href="{{ route('user.reports.index') }}"><i class="fa fa-list fa-sm"></i> Reports</a>
+                </li>
             @endif
         </ul>
     </div>
