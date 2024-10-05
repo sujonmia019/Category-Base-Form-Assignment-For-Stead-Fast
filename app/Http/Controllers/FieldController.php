@@ -2,19 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\FieldRequest;
+use Carbon\Carbon;
 use App\Models\Form;
 use App\Models\FormField;
-use App\Traits\ResponseMessage;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Traits\ResponseMessage;
+use App\Http\Requests\FieldRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class FieldController extends Controller
 {
     use ResponseMessage;
 
     public function formField(int $id){
+        Gate::allows('admin_access');
+
         $data['form'] = Form::with('fields')->findOrFail($id);
 
         page_title('Form Field');
@@ -46,5 +49,35 @@ class FieldController extends Controller
                 return $this->response_json('error','Data Cannot Save',null,204);
             }
         }
+    }
+
+    public function delete(Request $request){
+        if ($request->ajax()) {
+            $result = FormField::find($request->id);
+            if($result){
+                $result->delete();
+                return $this->delete_message($result,'Field');
+            }else{
+                return $this->response_json('error','Data Cannot Delete',null,204);
+            }
+        }
+    }
+
+    public function ordering(Request $request){
+        if ($request->ajax()) {
+            try {
+                $order = $request->order;
+                foreach ($order as $key => $id) {
+                    $item = FormField::find($id);
+                    $item->ordering = $key + 1;
+                    $item->save();
+                }
+
+                return response()->json(['status'=>'success','message'=>'Field order successfull.']);
+            } catch (\Exception $e) {
+                return response()->json(['status'=>'error','message'=>'Something went wrong!']);
+            }
+        }
+
     }
 }

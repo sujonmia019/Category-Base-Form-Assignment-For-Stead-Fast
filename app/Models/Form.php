@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Form extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * The table associated with the model.
@@ -27,8 +28,8 @@ class Form extends Model
         'description',
         'url',
         'status',
-        'created_at',
-        'updated_at'
+        'created_by',
+        'updated_by'
     ];
 
     public function category(){

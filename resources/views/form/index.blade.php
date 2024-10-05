@@ -87,5 +87,45 @@
                     </div>`,
             }
         });
+
+        // single delete
+        $(document).on('click', '.delete_data', function () {
+            let id   = $(this).data('id');
+            let name = $(this).data('name');
+            let row  = table.row($(this).parent('tr'));
+            let url  = "{{ route('app.forms.delete') }}";
+            delete_data(id,url,row,name);
+        });
+
+        // multi delete
+        function multi_delete(){
+            let ids = [];
+            let rows;
+            $('.select_data:checked').each(function(){
+                ids.push($(this).val());
+                rows = table.rows($('.select_data:checked').parents('tr'));
+            });
+
+            if(ids.length == 0){
+                Swal.fire({
+                    type:'error',
+                    title:'Error',
+                    text:'Please checked at least one row of table!',
+                    icon: 'warning',
+                });
+            }else{
+                let url = "{{ route('app.forms.bulk-delete') }}";
+                bulk_delete(ids,url,rows);
+            }
+        }
+
+        // status changes
+        $(document).on('click','.change_status', function(){
+            var id = $(this).data('id');
+            var name = $(this).data('name');
+            var status = $(this).data('status');
+            var url = "{{ route('app.forms.status-change') }}"
+            change_status(id,status,name,url);
+        });
     </script>
 @endpush

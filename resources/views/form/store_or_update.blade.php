@@ -46,24 +46,30 @@
                 <div class="card-body">
                     <form method="POST" id="store_or_update_form">
                         @csrf
-                        <input type="hidden" id="update_id" name="update_id" value="{{ $edit->id ?? '' }}">
+                        <input type="hidden" id="update_id" name="update_id" value="{{ $form->id ?? '' }}">
                         <x-select required="required" name="category_id" labelName="Category">
                             <option value="">Select Category</option>
                             @foreach ($categories as $key=>$value)
-                            <option value="{{ $key }}">{{ $value }}</option>
+                            <option value="{{ $key }}" @isset($form) {{ $form->category_id == $key ? 'selected' : '' }} @endisset>{{ $value }}</option>
                             @endforeach
                         </x-select>
-                        <x-input required="required" name="title" labelName="Title" placeholder="Enter Title"/>
-                        <x-textarea required="required" name="description" rows="4" labelName="Description" placeholder="Enter Description"></x-textarea>
+                        <x-input required="required" name="title" labelName="Title" placeholder="Enter Title" value="{{ $form->title }}"/>
+                        <x-textarea required="required" name="description" rows="4" labelName="Description" placeholder="Enter Description" value="{{ $form->description }}"></x-textarea>
                         <x-select required="required" name="status" labelName="Status">
                             @foreach (STATUS as $key=>$value)
-                            <option value="{{ $key }}">{{ $value }}</option>
+                            <option value="{{ $key }}" @isset($form) {{ $form->status == $key ? 'selected' : '' }} @endisset>{{ $value }}</option>
                             @endforeach
                         </x-select>
                     </form>
 
                     <div class="text-right mt-2">
-                        <button type="button" class="btn btn-sm rounded-0 btn-success shadow-none" id="save-btn"><span></span> Save</button>
+                        <button type="button" class="btn btn-sm rounded-0 btn-success shadow-none" id="save-btn"><span></span>
+                            @isset($form)
+                                Update
+                            @else
+                                Save
+                            @endisset
+                        </button>
                     </div>
                 </div>
             </div>
@@ -96,7 +102,7 @@
             var form = document.getElementById('store_or_update_form');
             var form_data = new FormData(form);
             var id = $('#update_id').val();
-            var url = "{{ route('app.forms.store') }}";
+            var url = "{{ route('app.forms.store-or-update') }}";
             $.ajax({
                 type: "POST",
                 url: url,

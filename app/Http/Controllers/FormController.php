@@ -46,7 +46,7 @@ class FormController extends Controller
                     $action = '<div class="d-flex align-items-center justify-content-end">';
                     $action .= '<a href="'.route('app.forms.fields.index',$row->id).'" class="btn btn-sm btn-success ml-1" data-id="' . $row->id . '"><i class="fa fa-sort-amount-asc"></i></a>';
 
-                    $action .= '<button type="button" class="btn btn-sm btn-primary ml-1" data-id="' . $row->id . '"><i class="fa fa-edit"></i></button>';
+                    $action .= '<a href="'.route('app.forms.edit',$row->id).'" class="btn btn-sm btn-primary ml-1"><i class="fa fa-edit"></i></a>';
 
                     $action .= '<button type="button" class="btn-danger btn btn-sm delete_data ml-1" data-id="' . $row->id . '" data-name="' . $row->reg_id . '"><i class="fa fa-trash"></i></button>';
                     $action .= '</div>';
@@ -74,7 +74,7 @@ class FormController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(FormDataRequest $request)
+    public function storeOrUpdate(FormDataRequest $request)
     {
         if ($request->ajax()) {
             $collection = collect($request->all());
@@ -89,34 +89,75 @@ class FormController extends Controller
 
             $result = Form::updateOrCreate(['id'=>$request->update_id],$collection->all());
             if($result){
-                return response()->json(['status'=>'success','message'=>'Form created successful.','redirect'=>route('app.forms.fields.index',$result->id)]);
+                $message = $request->update_id ? 'Form updated successful.' : 'Form created successful.';
+                return response()->json(['status'=>'success','message'=>$message,'redirect'=>route('app.forms.fields.index',$result->id)]);
             }else{
                 return $this->response_json('error','Data Cannot Save',null,204);
             }
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+    public function edit(int $id){
+        $data['form']       = Form::findOrFail($id);
+        $data['categories'] = Category::active()->pluck('name','id');
+        page_title('Edit Form');
+        return view('form.store_or_update',$data);
     }
 
     /**
-     * Update the specified resource in storage.
+     * spacified delete resource
+     *
+     * @return \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, string $id)
-    {
-        //
+    public function delete(Request $request){
+        if ($request->ajax()) {
+            $result = Form::find($request->id);
+            if($result){
+                $result->delete();
+                return $this->delete_message($result);
+            }else{
+                return $this->response_json('error','Data Cannot Delete',null,204);
+            }
+        }else{
+            return $this->response_json('error',UNAUTORIZED_BLOCK,null,204);
+        }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * multiple destroy resource
+     *
+     * @return \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
      */
-    public function destroy()
-    {
-        //
+    public function bulkDelete(Request $request){
+        if ($request->ajax()) {
+            $result = Form::destroy($request->ids);
+            if($result){
+                return $this->bulk_delete_message($result);
+            }else{
+                return $this->response_json('error','Data Cannot Delete',null,204);
+                }
+        }else{
+            return $this->response_json('error',UNAUTORIZED_BLOCK,null,204);
+        }
+    }
+
+    /**
+     * spacified status update
+     *
+     * @return \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function statusChange(Request $request){
+        if ($request->ajax()) {
+            $result = Form::find($request->id);
+            if ($result) {
+                $result->update(['status'=>$request->status]);
+                return $this->status_message($result);
+            }else{
+                return $this->response_json('error','Failed to change status',null,204);
+            }
+        }
     }
 }

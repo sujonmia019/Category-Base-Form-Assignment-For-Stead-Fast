@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @section('title',$title)
 @push('styles')
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
 <style>
     .field-list{
         list-style: none;
@@ -39,6 +40,9 @@
         font-size: 12px;
         color: #787878;
     }
+    .sortable-item .card:hover{
+        cursor: move;
+    }
 </style>
 @endpush
 
@@ -56,11 +60,16 @@
             <div class="alert alert-info"><strong>Noted:</strong> In order to create a form, you need to click on any on the question type in the presentation section (right sidebar) below. Please ensure that you fill in the appropriate field before submitting.</div>
 
             @if ($form->fields->isNotEmpty())
+            <div class="sortable-item">
                 @foreach ($form->fields as $field)
-                    <div class="card mb-3 sortable-item" data-id="{{ $field->id }}">
+                    <div class="card mb-3" data-id="{{ $field->id }}">
                         <div class="card-body">
                             <div class="form-group">
-                                <label class="d-block">{{ $field->label }} @if($field->required == 1)<small class="text-danger">(required)</small>@endif</label>
+                                <label class="d-flex align-items-center justify-content-between"><span>{{ $field->label }} @if($field->required == 1)<small class="text-danger">(required)</small></span>@endif
+
+                                    <button type="button" data-id="{{ $field->id }}" class="border-0 bg-transparent shadow-none text-danger px-1 delete_field">Delete</button>
+                                </label>
+
                                 @if (in_array($field->type,['text','textarea','file','date','tel','email']))
                                     @if ($field->type == 'textarea')
                                         <textarea name="" id="" rows="3" class="form-control form-control-sm" @if($field->placeholder) placeholder="{{ $field->placeholder }}" @endif></textarea>
@@ -79,20 +88,18 @@
                                         </select>
                                     @else
                                         @foreach (explode(',',$field->options) as $key=>$value)
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" name="{{ $field->label }}" type="{{ $field->type }}" id="{{ $field->type.$key }}" value="{{ $value }}">
-                                                <label class="form-check-label" for="{{ $field->type.$key }}">{{ $value }}</label>
+                                            <div class="form-check">
+                                                <input class="form-check-input" name="{{ $field->label }}" type="{{ $field->type }}" id="{{ $field->type.$key.str()->slug($field->label) }}" value="{{ $value }}">
+                                                <label class="form-check-label" for="{{ $field->type.$key.str()->slug($field->label) }}">{{ $value }}</label>
                                           </div>
                                         @endforeach
                                     @endif
                                 @endif
-                                <div class="text-right mt-2">
-                                    <button type="button" class="btn btn-sm btn-info">Edit</button>
-                                </div>
                             </div>
                         </div>
                     </div>
                 @endforeach
+            </div>
             @else
 
             @endif
@@ -107,7 +114,7 @@
                         <li><span><i class="fa fa-sm fa-minus mr-1"></i>Text:</span> <button class="field-add-btn shadow-none" type="button" data-form="text" data-type="text" data-name="single">Add</button></li>
                         <li><span><i class="fa fa-sm fa-bars mr-1"></i>Textarea:</span> <button class="field-add-btn shadow-none" type="button" data-form="field" data-type="textarea" data-name="single">Add</button></li>
                         <li><span><i class="fa fa-sm fa-caret-square-o-down mr-1"></i>Dropdown:</span> <button class="field-add-btn shadow-none" type="button" data-form="multi" data-type="select" data-name="multi">Add</button></li>
-                        <li><span><i class="fa fa-sm fa-dot-circle-o mr-1"></i>Multiple Choice:</span> <button class="field-add-btn shadow-none" type="button" data-form="multi" data-type="radio" data-name="multi">Add</button></li>
+                        <li><span><i class="fa fa-sm fa-dot-circle-o mr-1"></i>Radio:</span> <button class="field-add-btn shadow-none" type="button" data-form="multi" data-type="radio" data-name="multi">Add</button></li>
                         <li><span><i class="fa fa-sm fa-check-square mr-1"></i>Checkbox:</span> <button class="field-add-btn shadow-none" type="button" data-form="multi" data-type="checkbox" data-name="multi">Add</button></li>
                         <li><span><i class="fa fa-sm fa-file mr-1"></i>File:</span> <button class="field-add-btn shadow-none" type="button" data-form="field" data-type="file" data-name="single">Add</button></li>
                         <li><span><i class="fa fa-sm fa-calendar mr-1"></i>Date:</span> <button class="field-add-btn shadow-none" type="button" data-form="field" data-type="date" data-name="single">Add</button></li>
@@ -122,6 +129,7 @@
 @endsection
 
 @push('scripts')
+    <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
     <script>
         // form field modal
         $(document).on('click','.field-add-btn',function(){
@@ -136,6 +144,14 @@
             $('#'+form_id+'_store_or_update_modal .modal-title').text(field_type + ' Field');
             if (form_id != 'text') {
                 $('#'+form_id+'_store_or_update_form #type').val(field_type);
+            }
+
+            if (field_type != 'select') {
+                $('#'+form_id+'_store_or_update_form #multiple').hide();
+                $('#'+form_id+'_store_or_update_form label[for="multiple"]').hide();
+            }else{
+                $('#'+form_id+'_store_or_update_form #multiple').show();
+                $('#'+form_id+'_store_or_update_form label[for="multiple"]').show();
             }
 
             $('#'+form_id+'_store_or_update_modal').modal({
@@ -184,6 +200,70 @@
                 },
                 error: function (xhr, ajaxOption, thrownError) {
                     console.log(thrownError + '\r\n' + xhr.statusText + '\r\n' + xhr.responseText);
+                }
+            });
+        });
+
+        $(".sortable-item").sortable({
+            update: function(event, ui) {
+                var order = [];
+                $('.sortable-item > .card').each(function(index, element) {
+                    order.push($(element).data('id'));
+                });
+
+                $.ajax({
+                    url: '{{ route("app.forms.fields.ordering") }}',
+                    method: 'POST',
+                    data: {
+                        order: order,
+                        _token: _token
+                    },
+                    success: function(response) {
+                        notification(response.status,response.message);
+                        if(response.status == 'success') {
+                            setInterval(() => {
+                                window.location.reload();
+                            }, 500);
+                        }
+                    }
+                });
+            }
+        });
+
+        $(".sortable-item").disableSelection();
+
+        // Delete field
+        $(document).on('click','.delete_field',function(){
+            var id = $(this).data('id');
+            Swal.fire({
+                title: 'Are you sure to delete field?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                cancelButtonText: 'Cancel',
+                confirmButtonText: 'Confirm',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: "{{ route('app.forms.fields.delete') }}",
+                        type: "POST",
+                        data: {id:id,_token:_token},
+                        dataType: "JSON",
+                    }).done(function (response) {
+                        if (response.status == "success") {
+                            Swal.fire("Deleted", response.message, "success").then(function () {
+                                window.location.reload();
+                            });
+                        }
+
+                        if (response.status == "error") {
+                            Swal.fire('Oops...', response.message, "error");
+                        }
+                    }).fail(function () {
+                        Swal.fire('Oops...', "Somthing went wrong with ajax!", "error");
+                    });
                 }
             });
         });
