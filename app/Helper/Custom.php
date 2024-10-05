@@ -55,7 +55,7 @@ if (!function_exists('user_image')) {
 }
 
 if(!function_exists('dateFormat')){
-    function dateFormat($date){
-        return date('d-m-Y',strtotime($date));
+    function dateFormat($date,$format='d-m-Y H:i A'){
+        return date($format,strtotime($date));
     }
 }

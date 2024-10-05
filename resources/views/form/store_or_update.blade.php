@@ -26,12 +26,17 @@
         font-size: 12px;
         border-radius: 3px;
     }
+    .disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
 </style>
 @endpush
 
 @section('content')
     <div class="row">
-        <div class="col-md-6 mx-auto">
+        <div class="col-md-8">
             <div class="card">
                 <div class="card-header py-2">
                     <h5 class="card-title mb-0 d-flex align-items-center justify-content-between">{{ $title }}
@@ -41,25 +46,49 @@
                 <div class="card-body">
                     <form method="POST" id="store_or_update_form">
                         @csrf
-                        <input type="hidden" id="update_id" name="update_id" value="{{ $edit->id ?? '' }}">
+                        <input type="hidden" id="update_id" name="update_id" value="{{ $form->id ?? '' }}">
                         <x-select required="required" name="category_id" labelName="Category">
                             <option value="">Select Category</option>
                             @foreach ($categories as $key=>$value)
-                            <option value="{{ $key }}">{{ $value }}</option>
+                            <option value="{{ $key }}" @isset($form) {{ $form->category_id == $key ? 'selected' : '' }} @endisset>{{ $value }}</option>
                             @endforeach
                         </x-select>
-                        <x-input required="required" name="title" labelName="Title" placeholder="Enter Title"/>
-                        <x-textarea required="required" name="description" rows="4" labelName="Description" placeholder="Enter Description"></x-textarea>
+                        <x-input required="required" name="title" labelName="Title" placeholder="Enter Title" value="{{ $form->title }}"/>
+                        <x-textarea required="required" name="description" rows="4" labelName="Description" placeholder="Enter Description" value="{{ $form->description }}"></x-textarea>
                         <x-select required="required" name="status" labelName="Status">
                             @foreach (STATUS as $key=>$value)
-                            <option value="{{ $key }}">{{ $value }}</option>
+                            <option value="{{ $key }}" @isset($form) {{ $form->status == $key ? 'selected' : '' }} @endisset>{{ $value }}</option>
                             @endforeach
                         </x-select>
                     </form>
 
                     <div class="text-right mt-2">
-                        <button type="button" class="btn btn-sm rounded-0 btn-success shadow-none" id="save-btn"><span></span> Save</button>
+                        <button type="button" class="btn btn-sm rounded-0 btn-success shadow-none" id="save-btn"><span></span>
+                            @isset($form)
+                                Update
+                            @else
+                                Save
+                            @endisset
+                        </button>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header py-1">
+                    <h5 class="card-title mb-0">Choose Field</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="m-0 p-0 field-list disabled">
+                        <li><span><i class="fa fa-sm fa-minus mr-1"></i>Text:</span></li>
+                        <li><span><i class="fa fa-sm fa-bars mr-1"></i>Textarea:</span></li>
+                        <li><span><i class="fa fa-sm fa-caret-square-o-down mr-1"></i>Dropdown:</span></li>
+                        <li><span><i class="fa fa-sm fa-dot-circle-o mr-1"></i>Multiple Choice:</span></li>
+                        <li><span><i class="fa fa-sm fa-check-square mr-1"></i>Checkbox:</span></li>
+                        <li><span><i class="fa fa-sm fa-file mr-1"></i>File:</span></li>
+                        <li><span><i class="fa fa-sm fa-calendar mr-1"></i>Date:</span></li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -73,7 +102,7 @@
             var form = document.getElementById('store_or_update_form');
             var form_data = new FormData(form);
             var id = $('#update_id').val();
-            var url = "{{ route('app.forms.store') }}";
+            var url = "{{ route('app.forms.store-or-update') }}";
             $.ajax({
                 type: "POST",
                 url: url,
@@ -100,7 +129,7 @@
                         notification(data.status, data.message);
                         if (data.status == 'success') {
                             setInterval(() => {
-                                window.location.reload();
+                                window.location.href = data.redirect;
                             }, 1500);
                         }
                     }

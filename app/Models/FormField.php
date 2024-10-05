@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FormField extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * The table associated with the model.
@@ -33,4 +34,17 @@ class FormField extends Model
         'created_by',
         'updated_by'
     ];
+
+    public function formData(){
+        return $this->hasOne(FormData::class,'form_field_id','id');
+    }
+
+    public function form() {
+        return $this->belongsTo(Form::class);
+    }
+
+    public function values() {
+        return $this->hasMany(FormValue::class);
+    }
+    
 }

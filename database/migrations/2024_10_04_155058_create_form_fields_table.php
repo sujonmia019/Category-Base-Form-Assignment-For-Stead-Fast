@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('ordering')->default(0);
             $table->string('created_by')->nullable();
             $table->string('updated_by')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -10,6 +10,7 @@
                     @csrf
                     <input type="hidden" id="form_id" name="form_id" value="{{ $form->id }}">
                     <input type="hidden" id="update_id" name="update_id">
+                    <input type="hidden" id="form_name" name="form_name" value="field">
                     <input type="hidden" name="type" id="type">
                     <x-input labelName="Title" required="required" name="label"/>
                     <x-input labelName="Placeholder" name="placeholder"/>
@@ -20,7 +21,7 @@
                 </form>
                 <div class="text-right">
                     <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary btn-sm" id="field-save-btn"><span></span> Save</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="save-btn" data-form="field"><span></span> Save</button>
                 </div>
             </div>
         </div>
