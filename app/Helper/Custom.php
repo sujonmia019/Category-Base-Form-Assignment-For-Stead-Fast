@@ -1,6 +1,7 @@
 <?php
 
 define('USER_AVATAR_PATH','users/');
+define('FORM_FILE_PATH','form-file/');
 define('UNAUTORIZED_BLOCK','Unauthorized Access Block!');
 define('TABLE_PAGE_LENGTH',10);
 define('STATUS',[

@@ -1,6 +1,6 @@
 <footer>
     <div class="pull-right">
-        Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
+        &copy; 2024 Developer Sujon. All rights reserved.
     </div>
     <div class="clearfix"></div>
 </footer>

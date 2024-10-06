@@ -18,7 +18,7 @@ use Yajra\DataTables\Facades\DataTables;
 class DashboardController extends Controller
 {
     use UploadAble;
-  
+
     public function dashboard(Request $request){
         // Authorized Access
         Gate::allows('user_access');
@@ -75,7 +75,7 @@ class DashboardController extends Controller
                         if ($type == 'select' || $type == 'checkbox') {
                             $value = json_encode($value);
                         } else if($type == 'file'){
-                            $value = !empty($request->file('field_' . $field->id)) ? $this->upload_file($request->file('field_' . $field->id),'form-file/') : null;
+                            $value = !empty($request->file('field_' . $field->id)) ? $this->upload_file($request->file('field_' . $field->id),FORM_FILE_PATH) : null;
                         } else{
                             $value = $value;
                         }

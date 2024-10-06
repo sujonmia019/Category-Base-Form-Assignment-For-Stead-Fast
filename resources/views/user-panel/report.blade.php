@@ -66,7 +66,14 @@
                                         <td>
                                             <ul class="m-0 p-0" style="list-style: none;">
                                                 @foreach($submission->values as $value)
-                                                    <li><strong>{{ $value->field->label }}:</strong> {{ $value->value }}</li>
+                                                <li>
+                                                    <strong>{{ $value->field->label }}:</strong>
+                                                    @if ($value->type == 'file' && $value->value != null)
+                                                        <a href="{{ asset('uploads').'/'.FORM_FILE_PATH.$value->value }}" download class="text-primary">Download</a>
+                                                    @else
+                                                        {{ in_array($value->type,['select','checkbox']) ? implode(', ',json_decode($value->value,true)) : $value->value }}
+                                                    @endif
+                                                </li>
                                                 @endforeach
                                             </ul>
                                         </td>
