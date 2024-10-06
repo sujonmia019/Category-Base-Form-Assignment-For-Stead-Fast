@@ -15,7 +15,6 @@
                     </a>
                     <div class="dropdown-menu dropdown-usermenu pull-right"
                         aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="javascript:;"> Profile</a>
                         <button type="button" class="dropdown-item" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
                             <i class="fa fa-sign-out pull-right"></i>Logout</button>
 

@@ -35,10 +35,6 @@ class FormField extends Model
         'updated_by'
     ];
 
-    public function formData(){
-        return $this->hasOne(FormData::class,'form_field_id','id');
-    }
-
     public function form() {
         return $this->belongsTo(Form::class);
     }
@@ -46,5 +42,5 @@ class FormField extends Model
     public function values() {
         return $this->hasMany(FormValue::class);
     }
-    
+
 }

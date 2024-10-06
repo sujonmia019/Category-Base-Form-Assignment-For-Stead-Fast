@@ -53,8 +53,8 @@
                             <option value="{{ $key }}" @isset($form) {{ $form->category_id == $key ? 'selected' : '' }} @endisset>{{ $value }}</option>
                             @endforeach
                         </x-select>
-                        <x-input required="required" name="title" labelName="Title" placeholder="Enter Title" value="{{ $form->title }}"/>
-                        <x-textarea required="required" name="description" rows="4" labelName="Description" placeholder="Enter Description" value="{{ $form->description }}"></x-textarea>
+                        <x-input required="required" name="title" labelName="Title" placeholder="Enter Title" value="{{ $form->title ?? '' }}"/>
+                        <x-textarea required="required" name="description" rows="4" labelName="Description" placeholder="Enter Description" value="{{ $form->description ?? '' }}"></x-textarea>
                         <x-select required="required" name="status" labelName="Status">
                             @foreach (STATUS as $key=>$value)
                             <option value="{{ $key }}" @isset($form) {{ $form->status == $key ? 'selected' : '' }} @endisset>{{ $value }}</option>
